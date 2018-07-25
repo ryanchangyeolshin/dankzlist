@@ -6,12 +6,12 @@ const validateToken = (req, res, next) => {
     const { token } = req.body;
     return jwt.verify(token, process.env.JWT_TOKEN_KEY, (err, decoded) => {
       if (err) {
-        res.status(500).json({ message: err });
+        res.status(401).json({ message: err });
       }
       next();
     });
   }
-  res.status(404).json({ message: "Token is not available! User must login!" });
+  res.status(401).json({ message: "Token is not available! User must login!" });
 };
 
 module.exports = validateToken;
