@@ -29,7 +29,7 @@ const ItemsRouter = () => {
         res.status(200).json(items);
       }
       catch (err) {
-        res.status(500).json({ message: err });
+        res.status(400).json({ message: err });
       }
     })
     .post('/:user_id', validateToken, async (req, res) => {
@@ -41,7 +41,7 @@ const ItemsRouter = () => {
         res.status(201).json({ response });
       }
       catch(err) {
-        res.status(500).json({ message: err });
+        res.status(400).json({ message: err });
       }
     })
     .put('/:user_id/:item_id', validateToken, async (req, res) => {
@@ -52,12 +52,18 @@ const ItemsRouter = () => {
         res.status(202).json({ updated });
       }
       catch(err) {
-        res.status(500).json({ message: err });
+        res.status(400).json({ message: err });
       }
     })
     .delete('/:user_id/:item_id', validateToken, async (req, res) => {
       const { item_id } = req.params;
-
+      try {
+        const deleted = await deleteItem(item_id);
+        res.status(204).json({ deleted });
+      }
+      catch (err) {
+        res.status(400).json({ message: error });
+      }
     });
 
   return router;
