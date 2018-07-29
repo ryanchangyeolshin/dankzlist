@@ -1,4 +1,3 @@
-const uuid = require('uuid/v4');
 const knex = require('../knex');
 const Users = () => knex('users');
 
@@ -16,14 +15,25 @@ const getUserByEmail = email =>
     .where({ email })
     .then(user => user);
 
-const createUser = (email, hashedPassword) =>
+const createUser = (user_id, email, hashedPassword) =>
   Users()
-    .insert({ user_id: uuid(), email, password: hashedPassword })
+    .insert({ user_id, email, password: hashedPassword })
     .then(response => response);
 
-const deleteUser = (userId) =>
+const deleteUserById = (userId) =>
   Users()
     .where({ user_id: userId })
+    .del()
+    .then(response => response);
+
+const deleteAllUsers = () =>
+  Users()
+    .del()
+    .then(response => response);
+
+const deleteUserByEmail = email =>
+  Users()
+    .where({ email })
     .del()
     .then(response => response);
 
@@ -32,5 +42,7 @@ module.exports = {
   getUserById,
   getUserByEmail,
   createUser,
-  deleteUser,
+  deleteUserById,
+  deleteAllUsers,
+  deleteUserByEmail,
 };

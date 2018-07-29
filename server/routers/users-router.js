@@ -1,7 +1,7 @@
 require('dotenv').config({ path: './.env' });
 const { Router } = require('express');
 const { promisify } = require('util');
-
+const uuid = require('uuid/v4');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const {
@@ -9,7 +9,7 @@ const {
   getUserByEmail,
   getAllUsers,
   createUser,
-  deleteUser
+  deleteUserById,
 } = require('../knex/queries/users');
 
 const usersRouter = () => {
@@ -36,6 +36,7 @@ const usersRouter = () => {
     })
     .post('/login', async (req, res) => {
       const { email, password } = req.body;
+      console.log(email, password);
       try {
         const foundUser = await getUserByEmail(email);
         if (foundUser[0].password !== password) {
@@ -46,7 +47,7 @@ const usersRouter = () => {
         res.status(200).json({ token });
       }
       catch(err) {
-        res.status(500).json({ message: err });
+        res.status(404).json({ message: err.message });
       }
     })
     .post('/signup', async (req, res) => {
@@ -63,7 +64,8 @@ const usersRouter = () => {
             if (err) {
               res.status(400).json({ message: err });
             }
-            const response = await createUser(email, hash);
+            const userId = uuid();
+            const response = await createUser(userId, email, hash);
             res.status(201).json(response);
           });
         });
@@ -75,7 +77,7 @@ const usersRouter = () => {
     .delete('/:user_id', async (req, res) => {
       const { user_id } = req.params;
       try {
-        const response = deleteUser(user_id);
+        const response = deleteUserById(user_id);
         res.status(204).json(response);
       }
       catch (err) {

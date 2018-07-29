@@ -5,7 +5,7 @@ const Items = () => knex('items');
 // Basic CRUD
 const getFirstHundredItems = () =>
   Items()
-    .limit(50)
+    .limit(100)
     .then(items => items);
 
 const getItemsByUserID = userId =>
